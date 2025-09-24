@@ -2,32 +2,35 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getMovieById, getMovies } from "../services/api";
+import { useLoader } from "../context/LoaderContext";
 import ReviewForm from "./ReviewForm";
 
 export default function MovieDetail() {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const { showLoader, hideLoader } = useLoader();
 
   useEffect(() => {
     getMovies().then(setMovies);
   }, []);
 
   useEffect(() => {
+    showLoader();
     getMovieById(id)
       .then((data) => {
         setMovie(data);
-        setLoading(false);
       })
       .catch((err) => {
         setError("errore nel caricamento del film");
-        setLoading(false);
       })
-  }, [id]);
+      .finally(() => {
+        hideLoader();
+      })
+  }, [id, showLoader, hideLoader]);
 
-  if (loading) return <p>Caricamento...</p>;
   if (error) return <p>{error}</p>;
   if (!movie) return <p>Film non trovato</p>
 

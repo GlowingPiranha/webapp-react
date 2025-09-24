@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getMovieById, getMovies } from "../services/api";
+import ReviewForm from "./ReviewForm";
 
 export default function MovieDetail() {
   const { id } = useParams();
@@ -121,12 +122,27 @@ export default function MovieDetail() {
                 </div>
 
               </div>
+
             </div>
+
           ))}
         </div>
+
       ) : (
         <p>Nessuna recensione disponibile</p>
       )}
+      <div className="mt-5 pt-3 border-top">
+        <ReviewForm
+          movieId={movie.id}
+          onNewReview={(newReview) =>
+            setMovie((prev) => ({
+              ...prev,
+              reviews: prev.reviews ? [...prev.reviews, newReview] : [newReview],
+            }))
+          }
+        />
+      </div>
+
     </>
   );
 }
